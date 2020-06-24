@@ -9,30 +9,75 @@ function shuffleArray(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
+
 shuffleArray(allImg);
 console.log(allImg);
 //assign images to html
+let fronts = Array.from(document.getElementsByTagName('img'));
+let index = 0;
+fronts.forEach(front => {
+    front.src = allImg[index++];
+});
 
-
-//listen to clicks to turn images around
-function ClickListener(elm) {
-    return function () {
-        Memory.flipTile(elm.className);
-    };
-}
-aTag.onclick = ClickListener(image);
-const cards = document.querySelectorAll('.memory-card');
+//listen clicks to turn images around
+const cards = document.querySelectorAll('.flip-card');
+let flippedCard = false;
+let lockBoard = false;
+let firstCard, secondCard;
+let tryCount = 0;
 
 function flipCard() {
-    this.classList.toggle('flip');
+    if (lockBoard) return;
+    if (this === firstCard) return;
+    this.classList.add('flip');
+    if (!flippedCard) {
+        flippedCard = true;
+        firstCard = this;
+        return;
+    }
+    secondCard = this;
+    lockBoard = true;
+    checkMatch();
+}
+
+function checkMatch() {
+    //count attempts
+    tryCount++;
+    document.getElementById('yourScore').innerText = tryCount.toString();
+    let img1 = firstCard.children[0].src;
+    console.log(img1);
+    let img2 = secondCard.children[0].src;
+    console.log(img2);
+    let isMatch = (img1 === img2);
+    isMatch ? disableCards() : unflipCards();
+}
+
+//if match remove listener
+function disableCards() {
+    firstCard.removeEventListener('click', flipCard());
+    secondCard.removeEventListener('click', flipCard());
+    resetBoard();
+}
+
+//else timeout to unflip cards
+function unflipCards() {
+    setTimeout(() => {
+        firstCard.classList.remove('flip');
+        secondCard.classList.remove('flip');
+        resetBoard();
+        }, 1500);
+}
+
+//reset board
+function resetBoard() {
+    [flippedCard, lockBoard] = [false, false];
+    [firstCard, secondCard] = [null, null];
 }
 
 cards.forEach(card => card.addEventListener('click', flipCard));
 
-let inputs = document.querySelectorAll('.back');
-    inputs.forEach(input => {
-        input.addEventListener('click', () => {
-            //turn image
-        })
-    })
+//reset button
+document.getElementById('reset').addEventListener('click', () => {
+    location.reload();
+});
 

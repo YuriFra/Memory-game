@@ -1,7 +1,7 @@
 # Memory-game
 Creating a Js memory game
 
-[Check out my game.]()
+[Check out my game.](https://yurifra.github.io/Memory-game/)
 
 - Repository: `Memory-game`
 - Type of Challenge: `Learning Challenge`
